@@ -13,9 +13,7 @@ app.listen(3000, () => {
 });
 
 app.post('/todos', (req, res) => {
-  let newTodo = new Todo(req.body)
-
-  newTodo.save().then((doc) => {
+  Todo.create(req.body).then((doc) => {
     let jsonResponse = {'success': true, 'data': doc}
     res.status(201).json(jsonResponse)
   }).catch((err) => {
@@ -25,13 +23,23 @@ app.post('/todos', (req, res) => {
 })
 
 app.post('/users', (req, res) => {
-  let newUser = new User(req.bod)
-
-  newUser.save().then((doc) => {
+  User.create(req.body).then((doc) => {
     let jsonResponse = {'success': true, 'data': doc}
     res.status(201).json(jsonResponse)
   }).catch((err) => {
     let jsonResponse = {'success': false, errors: err.errors, 'message': err.message}
     res.status(400).json(jsonResponse)
+  })
+})
+
+app.get('/users', (req, res) => {
+  return User.find().then((users) => {
+    let jsonResponse = {'success': true, 'data': users}
+    let status = 200
+    res.status(status).json(jsonResponse)
+  }).catch((err) => {
+    let jsonResponse = {'success': false, 'message': 'No users found'}
+    let status = 404
+    res.status(status).json(jsonResponse)
   })
 })
