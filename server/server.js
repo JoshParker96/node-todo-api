@@ -1,12 +1,18 @@
-// resolve all comment in APIs
-// refactor (hard coded vales, routes)
-// seperate APis into seperate routes
-// add one to many relationships (then update required APIs to return those relations)
 
-// seperate/add middleware
-// add server log
-
-// add unit tests
+// TODO: seperate APis into seperate routes
+// TODO: seperate/add middleware
+/* TODO:  add unit tests (TDD approach to confirm future implementations)
+  -update and delete APIs return requested update/delete user/todo
+  -Error handling
+  -server error handling
+  -one to many relations
+  -server log?*/
+// TODO: resolve all failed unit test
+/* TODO: refactor and confrim test work
+  -hard coded values
+  -add routes
+  -abstract methods*/
+// TODO: Update READ.ME
 
 const express = require('express');
 const app = express();
