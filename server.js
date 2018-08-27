@@ -151,3 +151,5 @@ app.delete('/todos/:id', (req, res) => {
 app.listen(3000, () => {
   console.log("App listing on port 3000");
 })
+
+module.exports = {app}
