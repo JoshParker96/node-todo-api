@@ -13,21 +13,12 @@
   -add routes
   -abstract methods*/
 // TODO: Update READ.ME
-// Josh branch is up and running
 
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-
-const {mongoose} = require('./db/mongoose');
+const {app} = require('./app')
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
+const {mongoose} = require('./db/mongoose');
 
-app.use(bodyParser.json())
-
-app.listen(3000, () => {
-  console.log("App listing on port 3000");
-});
 
 app.post('/todos', (req, res) => {
   Todo.create(req.body).then((doc) => {
@@ -51,19 +42,6 @@ app.post('/users', (req, res) => {
   })
 })
 
-app.get('/users', (req, res) => {
-  return User.find().then((users) => {
-    let jsonResponse = {'success': true, 'data': users}
-    let status = 200
-    res.status(status).json(jsonResponse)
-  }).catch((err) => {
-    // handle server error
-    let jsonResponse = {'success': false, serverError: true}
-    let status = 404
-    res.status(status).json(jsonResponse)
-  })
-})
-
 app.get('/todos', (req, res) => {
   return Todo.find().then((todos) => {
     let jsonResponse = {'success': true, 'data': todos}
@@ -77,20 +55,31 @@ app.get('/todos', (req, res) => {
   })
 })
 
+app.get('/users', (req, res) => {
+  return User.find().then((users) => {
+    let jsonResponse = {'success': true, 'data': users}
+    let status = 200
+    res.status(status).json(jsonResponse)
+  }).catch((err) => {
+    // handle server error
+    let jsonResponse = {'success': false, serverError: true}
+    let status = 404
+    res.status(status).json(jsonResponse)
+  })
+})
+
 app.put('/users/:id', (req, res) => {
-  let userId = req.params.id
-  return User.findById(userId).then((user) => {
-    // update update function to req.body
-    // return updated user
-    let userId = {id: user.id}
-    return User.update(userId, {email: req.body.email})
-  }).then(() => {
+  return User.findByIdAndUpdate(req.params.id, {email: req.body.email}, function(err, raw) {
+    if (err) {return err}
+    return raw
+  }).then((raw) => {
     let jsonResponse = {'success': true}
     let status = 200
     res.status(status).json(jsonResponse)
   }).catch((err) => {
     // handle update error
     // handle server error
+    console.log("=====this is somehtginfdjkghdskjln");
     console.log(err);
     let jsonResponse = {'success': false, serverError: false}
     let status = 404
@@ -102,19 +91,17 @@ app.put('/users/:id', (req, res) => {
 })
 
 app.put('/todos/:id', (req, res) => {
-  let todoId = req.params.id
-  return Todo.findById(todoId).then((todo) => {
-    // update update function to req.body
-    // return updated user
-    let todoId = {id: todo.id}
-    return Todo.update(todoId, {email: req.body.email})
-  }).then(() => {
+  return Todo.findByIdAndUpdate(req.params.id, {text: req.body.text}, function(err, raw) {
+    if (err) {return err}
+    return raw
+  }).then((raw) => {
     let jsonResponse = {'success': true}
     let status = 200
     res.status(status).json(jsonResponse)
   }).catch((err) => {
     // handle update error
     // handle server error
+    console.log("=====this is somehtginfdjkghdskjln");
     console.log(err);
     let jsonResponse = {'success': false, serverError: false}
     let status = 404
@@ -160,3 +147,9 @@ app.delete('/todos/:id', (req, res) => {
 
   })
 })
+
+app.listen(3000, () => {
+  console.log("App listing on port 3000");
+})
+
+module.exports = {app}
