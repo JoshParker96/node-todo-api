@@ -1,6 +1,11 @@
 
+// TODO: add Schemas
+// TODO: config nodemon
+// TODO: Decide relations between models nad implement
+
 // TODO: seperate APis into seperate routes
 // TODO: seperate/add middleware
+
 /* TODO:  add unit tests (TDD approach to confirm future implementations)
   -update and delete APIs return requested update/delete user/todo
   -Error handling
@@ -16,7 +21,6 @@
 
 const {app} = require('./app')
 const {Todo} = require('./models/todo');
-const {User} = require('./models/user');
 const {mongoose} = require('./db/mongoose');
 
 
@@ -31,16 +35,6 @@ app.post('/todos', (req, res) => {
   })
 })
 
-app.post('/users', (req, res) => {
-  User.create(req.body).then((doc) => {
-    let jsonResponse = {'success': true, 'data': doc}
-    res.status(201).json(jsonResponse)
-  }).catch((err) => {
-    // handle create and server errors
-    let jsonResponse = {'success': false, errors: err.errors, 'message': err.message}
-    res.status(400).json(jsonResponse)
-  })
-})
 
 app.get('/todos', (req, res) => {
   return Todo.find().then((todos) => {
@@ -51,41 +45,6 @@ app.get('/todos', (req, res) => {
     // handle server error
     let jsonResponse = {'success': false, serverError: true}
     let status = 404
-    res.status(status).json(jsonResponse)
-  })
-})
-
-app.get('/users', (req, res) => {
-  return User.find().then((users) => {
-    let jsonResponse = {'success': true, 'data': users}
-    let status = 200
-    res.status(status).json(jsonResponse)
-  }).catch((err) => {
-    // handle server error
-    let jsonResponse = {'success': false, serverError: true}
-    let status = 404
-    res.status(status).json(jsonResponse)
-  })
-})
-
-app.put('/users/:id', (req, res) => {
-  return User.findByIdAndUpdate(req.params.id, {email: req.body.email}, function(err, raw) {
-    if (err) {return err}
-    return raw
-  }).then((raw) => {
-    let jsonResponse = {'success': true}
-    let status = 200
-    res.status(status).json(jsonResponse)
-  }).catch((err) => {
-    // handle update error
-    // handle server error
-    console.log("=====this is somehtginfdjkghdskjln");
-    console.log(err);
-    let jsonResponse = {'success': false, serverError: false}
-    let status = 404
-    if (err.name === 'CastError') {
-      jsonResponse['message'] = 'User does not exist'
-    }
     res.status(status).json(jsonResponse)
   })
 })
@@ -109,24 +68,6 @@ app.put('/todos/:id', (req, res) => {
       jsonResponse['message'] = 'User does not exist'
     }
     res.status(status).json(jsonResponse)
-  })
-})
-
-app.delete('/users/:id', (req, res) => {
-  let userId = req.params.id
-  return User.findById(userId).then((user) => {
-    // return removed user
-    return User.remove(user)
-  }).then(() => {
-    let jsonResponse = {'success': true}
-    let status = 200
-    res.status(status).json(jsonResponse)
-  }).catch((err) => {
-    console.log(err);
-    // hanlde user can not be found error
-    // hanlde delete error
-    // handle server error
-
   })
 })
 
